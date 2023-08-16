@@ -1,0 +1,65 @@
+name: Create GitHub release and publish to NPM
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  release-please:
+    name: release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ensure main branch
+        if: github.ref != 'refs/heads/main'
+        run: |-
+          echo "Not running on main - exit"
+          exit 1
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: ⚙️ Setup Node.js v16
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@erc725'
+          cache: 'npm'
+
+      - name: 🧰 Install
+        run: npm ci
+
+      - name: 💅 Lint
+        run: yarn run lint
+
+      - name: 🎯 Test
+        run: npm test
+
+      - name: 🛠 Build
+        run: npm run build
+
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          package-name: '@erc725/erc725.js'
+          bump-minor-pre-major: true
+          default-branch: main
+
+      - name: 🔍 Check if version changed
+        uses: EndBug/version-check@v1
+        if: github.event_name == 'push'
+        id: check
+
+      - name: 🔄 Check if should release
+        run: echo "SHOULD_RELEASE=${{ steps.check.outputs.changed == 'true' }}" >> $GITHUB_ENV
+
+      # Publish to NPM
+      - name: 📦 Publish to NPM
+        if: env.SHOULD_RELEASE == 'true'
+        run: yarn publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
