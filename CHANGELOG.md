@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.20.0](https://github.com/CallumGrindle/erc725.js/compare/v0.19.0...v0.20.0) (2023-08-16)
+
+
+### Features
+
+* amazing feature ([e55dae6](https://github.com/CallumGrindle/erc725.js/commit/e55dae611118767136b76c0e89e9d1f856d3b755))
+
 ## [0.19.0](https://github.com/CallumGrindle/erc725.js/compare/v0.18.0...v0.19.0) (2023-08-16)
 
 
